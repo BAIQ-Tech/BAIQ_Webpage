@@ -253,11 +253,11 @@ function AppContent() {
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
                   <Mail className="text-cyan-400" size={20} />
-                  <span className="text-gray-300">contact@baiq.tech</span>
+                  <span className="text-gray-300">shin@baiq.tech</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Phone className="text-cyan-400" size={20} />
-                  <span className="text-gray-300">+1 (555) 123-4567</span>
+                  <span className="text-gray-300">+81 (090) 9376-3519</span>
                 </div>
               </div>
               <p className="text-gray-300 mt-6">

@@ -31,6 +31,18 @@ const LanguageToggle = () => {
       >
         日本語
       </Button>
+      <Button
+        variant={language === 'zh' ? 'default' : 'outline'}
+        size="sm"
+        onClick={() => changeLanguage('zh')}
+        className={`text-xs px-3 py-1 ${
+          language === 'zh' 
+            ? 'bg-cyan-500 hover:bg-cyan-600 text-white' 
+            : 'bg-transparent border-cyan-500 text-cyan-400 hover:bg-cyan-500/10'
+        }`}
+      >
+        中文
+      </Button>
     </div>
   )
 }
