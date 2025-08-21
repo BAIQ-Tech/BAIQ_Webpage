@@ -12,6 +12,9 @@ import './App.css'
 function AppContent() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [scrollY, setScrollY] = useState(0)
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState('')
   const { t } = useTranslation()
 
   useEffect(() => {
@@ -19,6 +22,42 @@ function AppContent() {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    setSubmitStatus('')
+
+    // Validate form
+    if (!formData.name || !formData.email || !formData.message) {
+      setSubmitStatus('error')
+      setIsSubmitting(false)
+      return
+    }
+
+    try {
+      // Create mailto link for now (can be replaced with actual backend later)
+      const subject = encodeURIComponent('Contact from BAIQ Website')
+      const body = encodeURIComponent(
+        `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
+      )
+      const mailtoLink = `mailto:shin@baiq.tech?subject=${subject}&body=${body}`
+      
+      window.location.href = mailtoLink
+      
+      setSubmitStatus('success')
+      setFormData({ name: '', email: '', message: '' })
+    } catch (error) {
+      setSubmitStatus('error')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   const scrollToSection = (sectionId) => {
     document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' })
@@ -268,24 +307,48 @@ function AppContent() {
               <CardHeader>
                 <CardTitle className="text-white">{t('contact.form.title')}</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <Input 
-                  placeholder={t('contact.form.name')} 
-                  className="bg-slate-700/50 border-slate-600 text-white placeholder-gray-400"
-                />
-                <Input 
-                  type="email" 
-                  placeholder={t('contact.form.email')} 
-                  className="bg-slate-700/50 border-slate-600 text-white placeholder-gray-400"
-                />
-                <Textarea 
-                  placeholder={t('contact.form.message')} 
-                  rows={4}
-                  className="bg-slate-700/50 border-slate-600 text-white placeholder-gray-400"
-                />
-                <Button className="w-full bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600">
-                  {t('contact.form.send')}
-                </Button>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <Input 
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    placeholder={t('contact.form.name')} 
+                    className="bg-slate-700/50 border-slate-600 text-white placeholder-gray-400"
+                    required
+                  />
+                  <Input 
+                    name="email"
+                    type="email" 
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    placeholder={t('contact.form.email')} 
+                    className="bg-slate-700/50 border-slate-600 text-white placeholder-gray-400"
+                    required
+                  />
+                  <Textarea 
+                    name="message"
+                    value={formData.message}
+                    onChange={handleInputChange}
+                    placeholder={t('contact.form.message')} 
+                    rows={4}
+                    className="bg-slate-700/50 border-slate-600 text-white placeholder-gray-400"
+                    required
+                  />
+                  {submitStatus === 'error' && (
+                    <p className="text-red-400 text-sm">Please fill in all fields.</p>
+                  )}
+                  {submitStatus === 'success' && (
+                    <p className="text-green-400 text-sm">Message sent successfully!</p>
+                  )}
+                  <Button 
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 disabled:opacity-50"
+                  >
+                    {isSubmitting ? 'Sending...' : t('contact.form.send')}
+                  </Button>
+                </form>
               </CardContent>
             </Card>
           </div>
